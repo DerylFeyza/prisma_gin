@@ -1,0 +1,33 @@
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+generator db {
+    provider = "go run github.com/steebchen/prisma-client-go"
+}
+
+generator client {
+    provider = "go run github.com/steebchen/prisma-client-go"
+}
+
+model User {
+    id        String   @id @default(uuid())
+    username  String
+    email     String   @unique
+    password  String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    Post      Post[]
+}
+
+model Post {
+    id        String   @id @default(uuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    title     String
+    published Boolean
+    desc      String?
+    author    User     @relation(fields: [author_id], references: [id], onDelete: Cascade)
+    author_id String
+}
